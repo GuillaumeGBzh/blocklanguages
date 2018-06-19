@@ -84,6 +84,16 @@ class BlockLanguages extends Module
 					$default_rewrite[$infos['id_lang']] = $arr_link;
 				}
 			}
+
+            $module_name = Validate::isModuleName(Tools::getValue('module')) ? Tools::getValue('module') : '';
+            if ($module_name) {
+                $controller = Dispatcher::getInstance()->getController() ?: '';
+                $hookResult = Hook::exec('moduleBlockLanguagesLangRewriteUrls' . ucfirst($module_name) . ucfirst($controller), array('link' => $link), NULL, TRUE);
+                foreach ($hookResult as $module => $output) {
+                    $default_rewrite = $output;
+                }
+            }
+
 			$this->smarty->assign('lang_rewrite_urls', $default_rewrite);
 		}
 		return true;
